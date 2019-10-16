@@ -13,5 +13,5 @@ public interface MusicService {
     public Music updateComments(Music music);
     public boolean deleteTrack(int Id);
     public Optional<Music> getTrackById(int id);
-
+    public List<Music> trackByName(String name);
 }

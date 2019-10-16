@@ -43,4 +43,13 @@ public class MusicServiceImpl implements MusicService {
     public Optional<Music> getTrackById(int id) {
         return musicrepository.findById(id);
     }
+
+    @Override
+    public List<Music> trackByName(String trackName) {
+        List<Music> tracks = musicrepository.trackByName(trackName);
+        if(tracks.size()==0)
+            return null;
+        else
+            return tracks;
+    }
 }
