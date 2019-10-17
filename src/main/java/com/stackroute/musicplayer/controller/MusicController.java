@@ -1,7 +1,10 @@
 package com.stackroute.musicplayer.controller;
 
 import com.stackroute.musicplayer.domain.Music;
+import com.stackroute.musicplayer.exceptions.TrackAlreadyExistsException;
+import com.stackroute.musicplayer.exceptions.TrackNotFoundException;
 import com.stackroute.musicplayer.service.MusicService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +16,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "api/v1")
 public class MusicController {
-    MusicService musicService;
+   private MusicService musicService;
 
+   @Autowired
     public MusicController(MusicService musicService) {
         this.musicService = musicService;
     }
@@ -33,17 +37,17 @@ public class MusicController {
     }
     @GetMapping("track")
     public ResponseEntity<?> getAllMusic(){
-        ResponseEntity responseEntity;
+        ResponseEntity<Object> responseEntity;
         try{
-            responseEntity = new ResponseEntity(musicService.getAllMusic(), HttpStatus.CREATED);
+            responseEntity = new ResponseEntity<Object>(musicService.getAllMusic(), HttpStatus.CREATED);
         }catch (Exception ex) {
-            responseEntity = new ResponseEntity(ex.getMessage(),HttpStatus.CONFLICT);
+            responseEntity = new ResponseEntity<Object>(ex.getMessage(),HttpStatus.CONFLICT);
         }
         return responseEntity;
     }
     @PutMapping("track/{id}")
-    public  ResponseEntity<?> updateComments(@PathVariable(value = "id") int id,@Valid @RequestBody Music music){
-        ResponseEntity responseEntity;
+    public  ResponseEntity<?> updateComments(@PathVariable(value = "id") int id,@Valid @RequestBody Music music) throws TrackNotFoundException {
+        ResponseEntity<?> responseEntity;
         Optional<Music> track1 = musicService.getTrackById(id);
         try{
             if(!track1.isPresent()){
@@ -51,38 +55,31 @@ public class MusicController {
             }
             music.setId(id);
             musicService.saveMusic(music);
-            responseEntity = new ResponseEntity(musicService.getAllMusic(), HttpStatus.CREATED);
+            responseEntity = new ResponseEntity<Object> (musicService.getAllMusic(), HttpStatus.CREATED);
         }catch (Exception ex) {
-            responseEntity = new ResponseEntity(ex.getMessage(),HttpStatus.CONFLICT);
+            responseEntity = new ResponseEntity<Object> (ex.getMessage(),HttpStatus.CONFLICT);
         }
         return responseEntity;
     }
 
     @DeleteMapping("track/{id}")
     public ResponseEntity<?> deleteTrack(@PathVariable("id") int Id){
-        ResponseEntity responseEntity;
+        ResponseEntity<Object> responseEntity;
         try{
             musicService.deleteTrack(Id);
-            responseEntity = new ResponseEntity(musicService.getAllMusic(), HttpStatus.CREATED);
+            responseEntity = new ResponseEntity<Object>(musicService.getAllMusic(), HttpStatus.CREATED);
         }catch (Exception ex) {
-            responseEntity = new ResponseEntity(ex.getMessage(),HttpStatus.CONFLICT);
+            responseEntity = new ResponseEntity<Object>(ex.getMessage(),HttpStatus.CONFLICT);
         }
         return responseEntity;    }
 
     @GetMapping("search/{name}")
-    public ResponseEntity<?> searchTrack(@PathVariable String name)
+    public ResponseEntity<?> searchTrack(@PathVariable String name) throws TrackAlreadyExistsException, TrackNotFoundException
     {
+
+
         ResponseEntity responseEntity;
-        try
-        {
-            if(musicService.trackByName(name) ==  null)
-                throw new Exception("TrackNotFoundException");
-            responseEntity= new ResponseEntity<List<Music>>(musicService.trackByName(name), HttpStatus.CREATED);
-        }
-        catch (Exception e)
-        {
-            responseEntity =new ResponseEntity<String>(e.getMessage(),HttpStatus.CONFLICT);
-        }
+        responseEntity= new ResponseEntity<List<Music>>(musicService.trackByName(name), HttpStatus.CREATED);
         return responseEntity;
     }
 
