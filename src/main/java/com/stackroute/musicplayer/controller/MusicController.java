@@ -5,6 +5,7 @@ import com.stackroute.musicplayer.exceptions.TrackAlreadyExistsException;
 import com.stackroute.musicplayer.exceptions.TrackNotFoundException;
 import com.stackroute.musicplayer.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "api/v1")
 public class MusicController {
+    @Autowired
+    @Qualifier("trackDummyServiceImpl")
    private MusicService musicService;
 
-   @Autowired
+
     public MusicController(MusicService musicService) {
         this.musicService = musicService;
     }

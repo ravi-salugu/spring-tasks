@@ -5,25 +5,21 @@ import com.stackroute.musicplayer.exceptions.TrackAlreadyExistsException;
 import com.stackroute.musicplayer.exceptions.TrackNotFoundException;
 import com.stackroute.musicplayer.repository.MusicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.annotation.Id;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 @Service
-@Primary
-public class MusicServiceImpl implements MusicService {
-
-     private MusicRepository musicrepository;
+public class TrackDummyServiceImpl implements MusicService{
+    private MusicRepository musicrepository;
     @Autowired
-    public MusicServiceImpl(MusicRepository musicrepository){
+    public TrackDummyServiceImpl(MusicRepository musicrepository){
         this.musicrepository=musicrepository;
     }
     @Override
     public Music saveMusic(Music music) throws TrackAlreadyExistsException {
         if(musicrepository.existsById(music.getId())){
-            throw new TrackAlreadyExistsException("Track Already exists");
+            throw new TrackAlreadyExistsException("dummy Track Already exists");
         }
         Music saveMusic=musicrepository.save(music);
 
@@ -44,7 +40,7 @@ public class MusicServiceImpl implements MusicService {
     public void deleteTrack(int Id) throws TrackNotFoundException {
 
         if(!musicrepository.existsById(Id)){
-            throw new TrackNotFoundException("Track Not Found");
+            throw new TrackNotFoundException("dummy Track Not Found");
         }
         musicrepository.deleteById(Id);
 
@@ -53,7 +49,7 @@ public class MusicServiceImpl implements MusicService {
     @Override
     public Optional<Music> getTrackById(int id) throws TrackNotFoundException{
         if(!musicrepository.existsById(id)){
-            throw new TrackNotFoundException("Track Not Found");
+            throw new TrackNotFoundException("dummy Track Not Found");
         }
         return musicrepository.findById(id);
     }
@@ -62,7 +58,7 @@ public class MusicServiceImpl implements MusicService {
     public List<Music> trackByName(String trackName) throws TrackNotFoundException {
         List<Music> tracks = musicrepository.trackByName(trackName);
         if(tracks.size()==0)
-            throw new TrackNotFoundException("Track Not Found ");
+            throw new TrackNotFoundException("dummy Track Not Found ");
         else
             return tracks;
     }
